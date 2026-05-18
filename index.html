@@ -1,925 +1,743 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Diagnóstico Personalizado</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050505">
+    <title>Consulta Profissional - Protocolo BICARBONATO</title>
 
-  :root {
-    --bg: #0a0e1a;
-    --bg2: #111827;
-    --card: #131c2e;
-    --card2: #1a2540;
-    --cyan: #00c8e0;
-    --cyan2: #00a8c0;
-    --text: #e8eaf0;
-    --muted: #8892a4;
-    --border: #1e2d45;
-    --selected-bg: rgba(0,200,224,0.10);
-    --selected-border: #00c8e0;
-    --radius: 14px;
-  }
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init','1684876339545045');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id= 1684876339545045&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    font-family: 'Sora', sans-serif;
-    color: var(--text);
-    overflow: hidden;
-  }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#ef4444;--bg:#050505;--card:#111111;--text:#ffffff;--muted:#9ca3af;--border:#262626;--green:#22c55e}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        html,body{height:100%;overflow-x:hidden}
+        body{font-family:'Inter',sans-serif;background-color:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px}
+        .quiz-card{width:100%;max-width:550px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:clamp(18px,5vw,30px);box-shadow:0 20px 40px rgba(0,0,0,.6);text-align:center}
+        .fixed-header{font-size:clamp(9px,2.5vw,11px);font-weight:900;color:var(--primary);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px}
+        .headline{font-size:clamp(22px,6vw,30px);font-weight:900;color:#fff;margin-bottom:12px;line-height:1.2;text-transform:uppercase}
+        .sub-headline{font-size:clamp(13px,3.5vw,15px);color:var(--primary);font-weight:700;margin-bottom:18px}
+        .btn-next{background:var(--primary);color:#fff;border:none;padding:clamp(16px,4vw,22px);border-radius:14px;font-weight:900;cursor:pointer;width:100%;font-size:clamp(16px,4.5vw,20px);text-transform:uppercase;transition:all .3s;box-shadow:0 10px 20px rgba(239,68,68,.3);margin-top:20px;line-height:1.2}
+        .btn-next:hover{transform:scale(1.02)}.btn-next:active{transform:scale(.98)}
+        .screen{display:none}.screen.active{display:block}
+        .progress-bar{height:6px;background:var(--border);border-radius:10px;margin-bottom:24px;overflow:hidden}
+        .progress-fill{height:100%;background:var(--primary);width:0%;transition:width .4s ease}
+        .options-grid{display:grid;gap:12px;margin-bottom:20px}
+        .option-btn{background:var(--card);border:2px solid var(--border);color:var(--text);padding:clamp(14px,4vw,18px) clamp(12px,3vw,16px);border-radius:12px;cursor:pointer;font-weight:700;transition:all .2s;font-size:clamp(14px,3.8vw,16px);text-align:left;line-height:1.3;width:100%;display:flex;align-items:center;gap:12px}
+        .option-btn:hover,.option-btn:active{border-color:var(--primary);background:rgba(239,68,68,.1)}
+        .option-btn svg{flex-shrink:0;width:20px;height:20px;opacity:.75}
+        .urgency-badge{background:rgba(34,197,94,.15);border:2px solid var(--green);padding:10px 14px;border-radius:50px;display:inline-block;margin-bottom:18px;font-weight:900;color:var(--green);font-size:clamp(10px,2.8vw,12px);line-height:1.3}
 
-  /* ── SCREENS ── */
-  .screen {
-    display: none;
-    position: fixed;
-    inset: 0;
-    flex-direction: column;
-    background: var(--bg);
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
-  .screen.active { display: flex; }
+        /* ===== VIDEO PLAYER PRINCIPAL (Tela 01) ===== */
+        .video-wrap{
+            position:relative;width:100%;background:#000;
+            border-radius:14px;overflow:hidden;margin-bottom:10px;
+            border:2px solid var(--primary);
+            aspect-ratio:9/16;
+            box-shadow:0 0 30px rgba(239,68,68,.25);
+        }
+        .video-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+        .video-wrap video::-webkit-media-controls{display:none!important}
+        .video-wrap video::-webkit-media-controls-enclosure{display:none!important}
 
-  /* ── QUIZ SCREEN ── */
-  #quiz-screen {
-    padding: 0;
-  }
+        .big-play-btn{
+            position:absolute;inset:0;display:flex;flex-direction:column;
+            align-items:center;justify-content:center;z-index:20;cursor:pointer;
+            background:rgba(0,0,0,.45);backdrop-filter:blur(2px);
+            transition:opacity .25s;
+        }
+        .big-play-btn.hidden{opacity:0;pointer-events:none}
+        .big-play-circle{
+            width:80px;height:80px;
+            background:var(--primary);
+            border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 0 0 12px rgba(239,68,68,.22),0 0 40px rgba(239,68,68,.5);
+            animation:pulse-play 1.8s ease-in-out infinite;
+        }
+        .big-play-circle svg{width:34px;height:34px;fill:#fff;margin-left:5px}
+        .big-play-label{
+            margin-top:14px;
+            font-size:clamp(12px,3.2vw,14px);font-weight:900;
+            color:#fff;text-transform:uppercase;letter-spacing:1.5px;
+            text-shadow:0 2px 8px rgba(0,0,0,.8);
+        }
+        @keyframes pulse-play{
+            0%,100%{box-shadow:0 0 0 12px rgba(239,68,68,.22),0 0 40px rgba(239,68,68,.5)}
+            50%{box-shadow:0 0 0 22px rgba(239,68,68,.08),0 0 60px rgba(239,68,68,.7)}
+        }
 
-  .quiz-header {
-    padding: 20px 20px 0;
-    flex-shrink: 0;
-  }
+        .player-controls{
+            position:absolute;bottom:0;left:0;right:0;z-index:30;
+            background:linear-gradient(transparent, rgba(0,0,0,.85));
+            padding:28px 12px 10px;
+            opacity:0;transition:opacity .3s;pointer-events:none;
+        }
+        .video-wrap.playing .player-controls{opacity:1;pointer-events:all}
+        .player-seekbar{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:10px;cursor:pointer;position:relative;margin-bottom:8px;transition:height .15s}
+        .player-seekbar:hover{height:6px}
+        .player-seekbar-fill{height:100%;background:var(--primary);border-radius:10px;pointer-events:none;position:relative;box-shadow:0 0 6px rgba(239,68,68,.5)}
+        .player-seekbar-thumb{position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;background:#fff;border-radius:50%;box-shadow:0 0 4px rgba(0,0,0,.5)}
+        .player-bottom{display:flex;align-items:center;gap:10px}
+        .player-btn{background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .player-btn svg{width:22px;height:22px;fill:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+        .player-time{font-size:11px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.5px;flex:1;text-align:left}
 
-  .quiz-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 10px;
-    letter-spacing: -0.3px;
-  }
-  .quiz-title span { color: var(--cyan); }
+        /* ===== TELA 02 — VÍDEO DEPOIMENTO ===== */
+        .dep-video-wrap{
+            position:relative;width:100%;
+            background:#000;border-radius:14px;overflow:hidden;
+            margin:14px 0;border:1px solid var(--border);aspect-ratio:9/16;
+        }
+        .dep-video-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+        .dep-video-wrap video::-webkit-media-controls{display:none!important}
+        .dep-video-wrap video::-webkit-media-controls-enclosure{display:none!important}
+        .dep-badge{
+            position:absolute;bottom:10px;left:10px;right:10px;
+            background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
+            border:1px solid rgba(34,197,94,.4);border-radius:10px;
+            padding:8px 12px;font-size:clamp(10px,2.8vw,12px);font-weight:900;
+            color:var(--green);text-align:center;z-index:10;
+        }
+        .dep-sound-bar{
+            position:absolute;top:12px;left:12px;right:12px;
+            display:flex;align-items:center;gap:10px;
+            background:rgba(0,0,0,.78);backdrop-filter:blur(8px);
+            border:1.5px solid rgba(239,68,68,.6);border-radius:10px;
+            padding:10px 13px;z-index:20;cursor:pointer;
+            transition:opacity .3s,transform .3s;
+        }
+        .dep-sound-bar.hidden{opacity:0;pointer-events:none;transform:translateY(-6px)}
+        .dep-sound-bar-icon{font-size:20px;flex-shrink:0;animation:bounce-icon .8s ease-in-out infinite alternate}
+        .dep-sound-bar-text{font-size:clamp(12px,3.2vw,13px);font-weight:900;color:#fff;line-height:1.3;text-align:left}
+        .dep-sound-bar-text span{color:var(--primary)}
+        @keyframes bounce-icon{from{transform:scale(1)}to{transform:scale(1.25)}}
 
-  .progress-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  .progress-label {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 600;
-  }
-  .progress-pct {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 600;
-  }
-  .progress-bar-track {
-    height: 4px;
-    background: var(--card2);
-    border-radius: 99px;
-    overflow: hidden;
-    margin-bottom: 0;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--cyan2), var(--cyan));
-    border-radius: 99px;
-    transition: width 0.5s cubic-bezier(.4,0,.2,1);
-  }
+        /* ===== TELA 05 — DEPOIMENTOS MINI ===== */
+        .dep-mini-wrap{display:flex;align-items:center;gap:12px;background:#0a0a0a;border:1px solid var(--border);border-radius:14px;padding:10px;margin:12px 0;overflow:hidden;}
+        .dep-mini-thumb{position:relative;flex-shrink:0;width:90px;height:160px;background:#000;border-radius:10px;overflow:hidden;border:1px solid #222;}
+        .dep-mini-thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+        .dep-mini-thumb video::-webkit-media-controls{display:none!important}
+        .dep-mini-thumb video::-webkit-media-controls-enclosure{display:none!important}
+        .dep-mini-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:5;cursor:pointer;transition:background .2s;}
+        .dep-mini-play:hover{background:rgba(0,0,0,.2)}
+        .dep-mini-play svg{width:28px;height:28px;fill:#fff;filter:drop-shadow(0 1px 4px rgba(0,0,0,.6))}
+        .dep-mini-info{flex:1;text-align:left}
+        .dep-mini-label{font-size:clamp(9px,2.4vw,10px);font-weight:900;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+        .dep-mini-quote{font-size:clamp(12px,3.2vw,13px);font-weight:700;color:#fff;line-height:1.45;margin-bottom:8px}
+        .dep-mini-author{font-size:clamp(10px,2.6vw,11px);font-weight:700;color:var(--green)}
+        .dep-mini-stars{color:#f59e0b;font-size:13px;margin-bottom:2px}
 
-  .quiz-body {
-    flex: 1;
-    padding: 28px 20px 20px;
-    display: flex;
-    flex-direction: column;
-  }
+        /* ===== ANÁLISE ===== */
+        .analysis-dashboard{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+        .metric-card{background:#0a0a0a;border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center;position:relative;overflow:hidden;transition:border-color .4s ease}
+        .metric-card.active{border-color:var(--primary)}.metric-card.done{border-color:var(--green)}
+        .metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--border);transition:background .4s ease}
+        .metric-card.active::before{background:var(--primary)}.metric-card.done::before{background:var(--green)}
+        .metric-label{font-size:clamp(8px,2.2vw,10px);font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;transition:color .4s;line-height:1.3}
+        .metric-card.done .metric-label{color:#fff}
+        .metric-status{font-size:clamp(7px,2vw,9px);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;color:var(--muted);transition:color .4s}
+        .metric-card.active .metric-status{color:var(--primary)}.metric-card.done .metric-status{color:var(--green)}
+        .gauge-wrap{position:relative;width:56px;height:56px;margin:0 auto 8px}
+        .gauge-svg{transform:rotate(-90deg)}
+        .gauge-bg{fill:none;stroke:#222;stroke-width:4}
+        .gauge-fill{fill:none;stroke-width:4;stroke-linecap:round;stroke-dasharray:138.23;stroke-dashoffset:138.23;transition:stroke-dashoffset .8s ease,stroke .4s ease}
+        .gauge-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--muted)}
+        .analysis-center{grid-column:span 2;background:#0a0a0a;border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;text-align:left;transition:border-color .4s,background .4s}
+        .analysis-center.done{border-color:var(--green);background:rgba(34,197,94,.05)}
+        .center-icon{width:40px;height:40px;flex-shrink:0}
+        .center-label{font-size:clamp(9px,2.5vw,11px);font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+        .center-value{font-size:clamp(14px,4vw,17px);font-weight:900;color:#fff}
 
-  .question-text {
-    font-size: 19px;
-    font-weight: 700;
-    color: #fff;
-    text-align: center;
-    line-height: 1.4;
-    margin-bottom: 28px;
-  }
+        /* ===== TELA INTRO ===== */
+        .intro-step{background:#0a0a0a;border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;text-align:left}
+        .intro-step-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+        .intro-step-num{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .intro-step-label{font-size:clamp(13px,3.5vw,15px);font-weight:700;color:#fff;line-height:1.4}
+        .intro-step-label strong{color:var(--primary)}
+        .intro-video-wrap{position:relative;width:100%;border-radius:12px;overflow:hidden;border:1px solid #222;background:#000}
+        .intro-video-wrap video{width:100%;height:auto;display:block}
 
-  .options-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
-  }
+        /* ===== AVISO NAVEGADOR EXTERNO ===== */
+        .browser-tip{
+            display:flex;align-items:flex-start;gap:12px;
+            background:rgba(239,68,68,.08);
+            border:1.5px solid rgba(239,68,68,.4);
+            border-radius:14px;padding:14px;margin-top:20px;text-align:left;
+        }
+        .browser-tip-icon{font-size:22px;flex-shrink:0;line-height:1}
+        .browser-tip-text{font-size:clamp(12px,3.2vw,13px);font-weight:700;color:#fff;line-height:1.55}
+        .browser-tip-text span{color:var(--primary)}
 
-  .option-btn {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    text-align: left;
-    -webkit-tap-highlight-color: transparent;
-    position: relative;
-    overflow: hidden;
-  }
-  .option-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0,200,224,0);
-    transition: background 0.18s;
-  }
-  .option-btn:active::after {
-    background: rgba(0,200,224,0.07);
-  }
-  .option-btn.selected {
-    border-color: var(--selected-border);
-    background: var(--selected-bg);
-  }
-  .option-btn.selected .radio-circle {
-    border-color: var(--cyan);
-    background: var(--cyan);
-  }
-  .option-btn.selected .radio-circle::after {
-    opacity: 1;
-  }
+        /* ===== OFERTA ===== */
+        .result-hero{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(34,197,94,.05));border:3px solid var(--green);padding:clamp(16px,4vw,24px) clamp(14px,3.5vw,22px);border-radius:20px;margin:20px 0;box-shadow:0 15px 40px rgba(34,197,94,.2);text-align:center}
+        .result-label{font-size:clamp(10px,2.8vw,12px);color:#9ca3af;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px}
+        .result-number{font-size:clamp(30px,8vw,38px);font-weight:900;color:var(--green);line-height:1;margin:8px 0;text-shadow:0 0 20px rgba(34,197,94,.45);letter-spacing:-1px}
+        .result-subtext{font-size:clamp(12px,3.2vw,15px);color:#d1d5db;margin-top:10px;font-weight:600;line-height:1.4}
+        .urgency-timer{background:rgba(239,68,68,.1);border:2px solid #ef4444;padding:11px 14px;border-radius:12px;margin:18px 0;font-size:clamp(11px,3vw,13px);font-weight:900;color:#ef4444;line-height:1.4}
+        .benefit-list{text-align:left;margin:20px 0}
+        .benefit-item{display:flex;align-items:flex-start;margin-bottom:14px;font-size:clamp(13px,3.5vw,15px);font-weight:700;color:#fff;line-height:1.4}
+        .benefit-item span{color:var(--green);margin-right:10px;font-size:clamp(16px,4vw,20px);flex-shrink:0;margin-top:-1px}
+        .guarantee-box{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);padding:clamp(12px,3vw,15px);border-radius:12px;margin:18px 0;border:1px dashed #444;gap:14px}
+        .guarantee-badge{width:clamp(40px,10vw,50px);height:auto;flex-shrink:0}
+        .guarantee-text{text-align:left}.guarantee-text p{font-size:clamp(11px,3vw,13px);line-height:1.4}
+        .social-proof-live{font-size:clamp(11px,3vw,13px);color:var(--green);font-weight:700;margin:14px 0}
+        .question-text{font-size:clamp(17px,4.8vw,22px);font-weight:900;margin-bottom:18px;line-height:1.35;text-align:left}
+        .secure-footer{font-size:clamp(10px,2.5vw,11px);color:var(--muted);margin-top:14px;line-height:1.5}
+        .analysis-spinner-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:18px}
+        .spinner-ring{width:48px;height:48px;border:3px solid #222;border-top-color:var(--primary);border-radius:50%;animation:spin .9s linear infinite}
+        .spinner-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 
-  .radio-circle {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 2px solid var(--muted);
-    flex-shrink: 0;
-    position: relative;
-    transition: all 0.18s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .radio-circle::after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    background: #fff;
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 0.18s;
-  }
-
-  .option-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.4;
-  }
-  .option-btn.selected .option-label {
-    color: #fff;
-    font-weight: 600;
-  }
-
-  /* ── QUIZ FOOTER ── */
-  .quiz-footer {
-    padding: 16px 20px 32px;
-    display: flex;
-    gap: 12px;
-    flex-shrink: 0;
-  }
-
-  .btn-back {
-    flex: 0 0 100px;
-    height: 52px;
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: 'Sora', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    -webkit-tap-highlight-color: transparent;
-    transition: opacity 0.2s;
-  }
-  .btn-back:active { opacity: 0.7; }
-
-  .btn-next {
-    flex: 1;
-    height: 52px;
-    background: var(--card2);
-    border: none;
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: 'Sora', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    -webkit-tap-highlight-color: transparent;
-    transition: all 0.2s;
-  }
-  .btn-next.enabled {
-    background: linear-gradient(135deg, var(--cyan2), var(--cyan));
-    color: #0a0e1a;
-  }
-  .btn-next:active { opacity: 0.85; }
-
-  .btn-next-solo {
-    width: 100%;
-    height: 52px;
-    background: var(--card2);
-    border: none;
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: 'Sora', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    -webkit-tap-highlight-color: transparent;
-    transition: all 0.2s;
-  }
-  .btn-next-solo.enabled {
-    background: linear-gradient(135deg, var(--cyan2), var(--cyan));
-    color: #0a0e1a;
-  }
-
-  /* ── LOADING SCREEN ── */
-  #loading-screen {
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px 32px;
-  }
-
-  .lupa-wrapper {
-    font-size: 48px;
-    margin-bottom: 28px;
-    position: relative;
-    width: 64px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .lupa-emoji {
-    font-size: 48px;
-    animation: lupaScan 1.8s ease-in-out infinite;
-    display: inline-block;
-    transform-origin: center;
-  }
-  @keyframes lupaScan {
-    0%   { transform: translate(0,0) rotate(-10deg); }
-    20%  { transform: translate(6px,-4px) rotate(5deg); }
-    40%  { transform: translate(-4px,6px) rotate(-8deg); }
-    60%  { transform: translate(8px,2px) rotate(10deg); }
-    80%  { transform: translate(-6px,-2px) rotate(-5deg); }
-    100% { transform: translate(0,0) rotate(-10deg); }
-  }
-
-  .loading-title {
-    font-size: 22px;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 14px;
-  }
-  .loading-sub {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 40px;
-    max-width: 280px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .spinner-wrap {
-    margin-bottom: 24px;
-  }
-  .spinner {
-    width: 44px;
-    height: 44px;
-    border: 3px solid rgba(0,200,224,0.15);
-    border-top-color: var(--cyan);
-    border-radius: 50%;
-    animation: spin 0.9s linear infinite;
-    margin: 0 auto;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loading-aguarde {
-    font-size: 13px;
-    color: var(--muted);
-    font-style: italic;
-  }
-
-  /* ── RESULT SCREEN ── */
-  #result-screen {
-    padding: 0;
-  }
-
-  .result-header {
-    padding: 12px 20px 6px;
-    flex-shrink: 0;
-  }
-  .result-title {
-    font-size: 21px;
-    font-weight: 800;
-    color: #fff;
-    line-height: 1.3;
-    margin-bottom: 4px;
-  }
-  .result-title span { color: var(--cyan); }
-  .result-sub {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.4;
-    margin-bottom: 10px;
-  }
-
-  /* ── VIDEO PLAYER ── */
-  .video-container {
-    margin: 0 16px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #000;
-    position: relative;
-    width: calc(100% - 32px);
-    flex-shrink: 0;
-    border: 1.5px solid rgba(0,200,224,0.15);
-  }
-
-  .video-container video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    background: #000;
-  }
-
-  .vid-tap-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 3;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .vid-center-btn {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.55);
-    border: 2px solid rgba(255,255,255,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.3s, transform 0.2s;
-    backdrop-filter: blur(4px);
-  }
-  .vid-center-btn svg { width: 28px; height: 28px; }
-  .vid-center-btn.hidden {
-    opacity: 0;
-    transform: scale(0.85);
-    pointer-events: none;
-  }
-
-  .video-controls {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.75));
-    padding: 28px 14px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    z-index: 4;
-    transition: opacity 0.4s ease;
-  }
-  .video-controls.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .play-pause-btn {
-    width: 32px;
-    height: 32px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .play-pause-btn svg { width: 22px; height: 22px; }
-
-  .time-display {
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.85);
-    font-family: 'Sora', sans-serif;
-    flex-shrink: 0;
-    flex: 1;
-  }
-
-  .volume-btn {
-    width: 30px;
-    height: 30px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .volume-btn svg { width: 20px; height: 20px; }
-
-  /* CTA area */
-  .result-cta {
-    padding: 8px 16px 14px;
-    flex-shrink: 0;
-  }
-
-  .cta-unlock-btn {
-    width: 100%;
-    height: 54px;
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--muted);
-    font-family: 'Sora', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: not-allowed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 14px;
-    transition: all 0.4s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .cta-unlock-btn.unlocked {
-    background: linear-gradient(135deg, #00a8c0, var(--cyan));
-    border-color: transparent;
-    color: #0a0e1a;
-    cursor: pointer;
-    font-weight: 800;
-    font-size: 15px;
-    box-shadow: 0 8px 30px rgba(0,200,224,0.35);
-    animation: pulse-glow 1.8s ease-in-out infinite;
-  }
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 8px 30px rgba(0,200,224,0.35); }
-    50% { box-shadow: 0 8px 45px rgba(0,200,224,0.6); }
-  }
-
-  .cta-security {
-    font-size: 12px;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.5;
-  }
-  .cta-security span {
-    color: rgba(0,200,224,0.7);
-  }
-
-  /* ── FADE IN ── */
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .screen.active .quiz-body,
-  .screen.active .quiz-header {
-    animation: fadeInUp 0.35s ease both;
-  }
-
-  /* ── SCROLLBAR hide ── */
-  .screen::-webkit-scrollbar { display: none; }
-  .screen { -ms-overflow-style: none; scrollbar-width: none; }
-
-</style>
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @media(max-width:380px){body{padding:10px}.quiz-card{padding:16px 14px;border-radius:16px}.btn-next{padding:15px;font-size:15px}}
+    </style>
 </head>
 <body>
+<div class="quiz-card">
 
-<!-- ══════════════════════════════════════════
-     QUIZ SCREEN
-══════════════════════════════════════════ -->
-<div id="quiz-screen" class="screen active">
-  <div class="quiz-header">
-    <div class="quiz-title">Diagnóstico <span>Personalizado</span></div>
-    <div class="progress-row">
-      <span class="progress-label" id="progress-label">Pergunta 1 de 7</span>
-      <span class="progress-pct" id="progress-pct">14% completo</span>
+    <!-- TELA 0: INSTRUÇÃO ABRIR NO NAVEGADOR -->
+    <div id="s-intro" class="screen">
+        <div class="fixed-header">⚠️ PASSO OBRIGATÓRIO ANTES DE CONTINUAR</div>
+        <h2 class="headline" style="font-size:clamp(18px,5vw,24px)">PARA VER O VÍDEO COM A FÓRMULA SECRETA, SIGA OS 2 PASSOS ABAIXO</h2>
+        <p style="font-size:clamp(12px,3.2vw,14px);color:var(--muted);margin-bottom:20px;font-weight:600;line-height:1.5">O conteúdo é protegido e <mark style="background:rgba(239,68,68,.25);color:#fff;padding:2px 6px;border-radius:4px;font-weight:900">só funciona abrindo no navegador</mark>. Siga exatamente como mostrado:</p>
+
+        <!-- PASSO 1 -->
+        <div class="intro-step">
+            <div class="intro-step-header">
+                <div class="intro-step-num">1</div>
+                <div class="intro-step-label">Toque nos <strong>3 pontinhos</strong> no canto superior direito</div>
+            </div>
+            <div class="intro-video-wrap">
+                <video id="intro-vid-1" playsinline webkit-playsinline preload="auto" muted loop autoplay disablePictureInPicture controlsList="nodownload nofullscreen noremoteplayback">
+                    <source src="https://metodotripe.shop/wp-content/uploads/2026/05/01-OK.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+        <!-- PASSO 2 -->
+        <div class="intro-step">
+            <div class="intro-step-header">
+                <div class="intro-step-num">2</div>
+                <div class="intro-step-label">Toque em <strong>"Abrir no navegador"</strong></div>
+            </div>
+            <div class="intro-video-wrap">
+                <video id="intro-vid-2" playsinline webkit-playsinline preload="auto" muted loop autoplay disablePictureInPicture controlsList="nodownload nofullscreen noremoteplayback">
+                    <source src="https://metodotripe.shop/wp-content/uploads/2026/05/02-OK.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
     </div>
-    <div class="progress-bar-track">
-      <div class="progress-bar-fill" id="progress-bar" style="width:14%"></div>
+
+    <!-- TELA 1: VÍDEO PRINCIPAL -->
+    <div id="s-0" class="screen">
+        <div class="fixed-header">PROTOCOLO BICARBONATO — 3 INGREDIENTES</div>
+        <h1 class="headline">O SEGREDO DOS ATORES PARA ATIVAR O CRESCIMENTO DO EM 45 DIAS.</h1>
+        <p class="sub-headline">AUMENTE ATÉ 7CM DO SEU EM 45 DIAS SEM CIRURGIA OU APARELHOS — ASSISTA O VÍDEO</p>
+
+        <div class="video-wrap" id="video-wrap">
+            <video id="main-video" playsinline webkit-playsinline preload="auto" disablePictureInPicture controlsList="nodownload nofullscreen noremoteplayback" x-webkit-airplay="deny">
+                <source src="https://doram.shop/wp-content/uploads/2026/03/0322-1.mp4" type="video/mp4">
+            </video>
+
+            <div class="big-play-btn" id="big-play-btn" onclick="bigPlay()">
+                <div class="big-play-circle">
+                    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                </div>
+                <div class="big-play-label">▶ Toque para assistir</div>
+            </div>
+
+            <div class="player-controls">
+                <div class="player-seekbar" id="seekbar">
+                    <div class="player-seekbar-fill" id="seekbar-fill" style="width:0%">
+                        <div class="player-seekbar-thumb"></div>
+                    </div>
+                </div>
+                <div class="player-bottom">
+                    <button class="player-btn" onclick="togglePlay()">
+                        <svg id="icon-pause" viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
+                        <svg id="icon-play" viewBox="0 0 24 24" style="display:none"><polygon points="5,3 19,12 5,21"/></svg>
+                    </button>
+                    <span class="player-time" id="player-time">0:00 / 0:00</span>
+                    <button class="player-btn" onclick="toggleMute()">
+                        <svg id="icon-vol-on" viewBox="0 0 24 24">
+                            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                            <path d="M19.07 4.93a10 10 0 010 14.14" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/>
+                            <path d="M15.54 8.46a5 5 0 010 7.07" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/>
+                        </svg>
+                        <svg id="icon-vol-off" viewBox="0 0 24 24" style="display:none">
+                            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                            <line x1="23" y1="9" x2="17" y2="15" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="17" y1="9" x2="23" y2="15" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-next" onclick="goNext()">🔓 LIBERAR MINHA FÓRMULA AGORA</button>
     </div>
-  </div>
 
-  <div class="quiz-body" id="quiz-body">
-    <!-- injected by JS -->
-  </div>
+    <!-- TELA 2: DEPOIMENTO EM VÍDEO -->
+    <div id="s-1" class="screen">
+        <div class="fixed-header">RESULTADO REAL — DEPOIMENTO VERIFICADO</div>
+        <h2 class="headline">VEJA QUEM JÁ USOU O PROTOCOLO</h2>
+        <div class="urgency-badge">🟢 <span id="online-count-val">147</span> HOMENS FAZENDO AVALIAÇÃO AGORA</div>
 
-  <div class="quiz-footer" id="quiz-footer">
-    <!-- injected by JS -->
-  </div>
+        <div class="dep-video-wrap">
+            <div class="dep-sound-bar hidden" id="dep-sound-bar" onclick="unmuteDepVid()">
+                <div class="dep-sound-bar-icon">🔊</div>
+                <div class="dep-sound-bar-text"><span>Toque aqui para ativar o som</span> do depoimento</div>
+            </div>
+            <video id="dep-video" playsinline webkit-playsinline preload="auto" muted disablePictureInPicture controlsList="nodownload nofullscreen noremoteplayback" x-webkit-airplay="deny">
+                <source src="https://metodotripe.shop/wp-content/uploads/2026/04/01.mp4" type="video/mp4">
+            </video>
+            <div class="dep-badge">✅ DEPOIMENTO REAL — RESULTADO VERIFICADO</div>
+        </div>
+
+        <button class="btn-next" onclick="goNextS1()">QUERO O MESMO RESULTADO — FAZER AVALIAÇÃO</button>
+    </div>
+
+    <!-- TELA 3: QUIZ -->
+    <div id="s-2" class="screen">
+        <div class="fixed-header">AVALIAÇÃO CLÍNICA — ETAPA <span id="q-num">1</span>/5</div>
+        <div class="progress-bar"><div class="progress-fill" id="p-fill"></div></div>
+        <div id="q-box"></div>
+    </div>
+
+    <!-- TELA 4: PROCESSAMENTO -->
+    <div id="s-3" class="screen">
+        <div class="fixed-header">SISTEMA DE DIAGNÓSTICO AVANÇADO</div>
+        <h2 style="font-size:clamp(16px,4.5vw,20px);font-weight:900;margin-bottom:18px">ANALISANDO SEUS DADOS BIOMÉTRICOS</h2>
+        <div class="analysis-spinner-wrap" id="spinner-wrap"><div class="spinner-ring"></div><div class="spinner-label" id="spinner-label">Inicializando...</div></div>
+        <div class="analysis-dashboard">
+            <div class="metric-card" id="mc-1"><div class="gauge-wrap"><svg class="gauge-svg" width="56" height="56" viewBox="0 0 56 56"><circle class="gauge-bg" cx="28" cy="28" r="22"/><circle class="gauge-fill" id="gf-1" cx="28" cy="28" r="22" stroke="#ef4444"/></svg><div class="gauge-text" id="gv-1">—</div></div><div class="metric-label">Expansão Tecidual</div><div class="metric-status" id="ms-1">Aguardando</div></div>
+            <div class="metric-card" id="mc-2"><div class="gauge-wrap"><svg class="gauge-svg" width="56" height="56" viewBox="0 0 56 56"><circle class="gauge-bg" cx="28" cy="28" r="22"/><circle class="gauge-fill" id="gf-2" cx="28" cy="28" r="22" stroke="#ef4444"/></svg><div class="gauge-text" id="gv-2">—</div></div><div class="metric-label">Potencial de Crescimento</div><div class="metric-status" id="ms-2">Aguardando</div></div>
+            <div class="metric-card" id="mc-3"><div class="gauge-wrap"><svg class="gauge-svg" width="56" height="56" viewBox="0 0 56 56"><circle class="gauge-bg" cx="28" cy="28" r="22"/><circle class="gauge-fill" id="gf-3" cx="28" cy="28" r="22" stroke="#ef4444"/></svg><div class="gauge-text" id="gv-3">—</div></div><div class="metric-label">Índice Vascular</div><div class="metric-status" id="ms-3">Aguardando</div></div>
+            <div class="metric-card" id="mc-4"><div class="gauge-wrap"><svg class="gauge-svg" width="56" height="56" viewBox="0 0 56 56"><circle class="gauge-bg" cx="28" cy="28" r="22"/><circle class="gauge-fill" id="gf-4" cx="28" cy="28" r="22" stroke="#ef4444"/></svg><div class="gauge-text" id="gv-4">—</div></div><div class="metric-label">Resposta Hormonal</div><div class="metric-status" id="ms-4">Aguardando</div></div>
+            <div class="analysis-center" id="mc-center"><svg class="center-icon" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" stroke="#333" stroke-width="2"/><path d="M12 20l5 5 11-10" stroke="#444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="check-path"/></svg><div><div class="center-label">Compatibilidade com Protocolo</div><div class="center-value" id="center-value">Calculando...</div></div></div>
+        </div>
+
+    </div>
+
+    <!-- TELA 5: OFERTA -->
+    <div id="s-4" class="screen">
+        <div class="fixed-header">✓ AVALIAÇÃO CONCLUÍDA</div>
+        <h2 style="font-size:clamp(17px,4.8vw,20px);font-weight:900;margin-bottom:18px">SEU PLANO PERSONALIZADO DE 45 DIAS ESTÁ PRONTO</h2>
+        <div class="result-hero"><div class="result-label">VOCÊ PODE GANHAR</div><div class="result-number">4 – 7 CM</div><div class="result-label">DE COMPRIMENTO + GROSSURA</div><p class="result-subtext">Baseado no seu nível vascular, histórico de ereção e urgência declarada</p></div>
+        <div class="urgency-timer">⚠️ <span id="access-count">47</span> HOMENS PEGARAM ACESSO NAS ÚLTIMAS 4 HORAS</div>
+        <div class="benefit-list">
+            <div class="benefit-item"><span>✓</span> Ganhe de 3 a 7cm de comprimento PERMANENTE</div>
+            <div class="benefit-item"><span>✓</span> Primeiras medições visíveis em apenas 21 dias</div>
+            <div class="benefit-item"><span>✓</span> Ereções 3x mais firmes e duradouras a partir do dia 30</div>
+            <div class="benefit-item"><span>✓</span> Zero cirurgias, aparelhos ou medicamentos</div>
+            <div class="benefit-item"><span>✓</span> Ela vai SENTIR a diferença (e te agradecer)</div>
+            <div class="benefit-item"><span>✓</span> Garantia incondicional de 30 dias</div>
+        </div>
+
+        <!-- Depoimento 1 -->
+        <div class="dep-mini-wrap">
+            <div class="dep-mini-thumb">
+                <video id="dep-video-mini-1" playsinline webkit-playsinline preload="metadata" muted loop disablePictureInPicture controlsList="nodownload nofullscreen noremoteplayback" x-webkit-airplay="deny">
+                    <source src="https://metodotripe.shop/wp-content/uploads/2026/04/01-dep.mp4" type="video/mp4">
+                </video>
+                <div class="dep-mini-play" id="dep-mini-play-btn-1">
+                    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                </div>
+            </div>
+            <div class="dep-mini-info">
+                <div class="dep-mini-label">Marcelo Texeira</div>
+                <div class="dep-mini-stars">★★★★★</div>
+                <div class="dep-mini-quote">"Resultado real em menos de 30 dias. Não acreditava, mas funcionou."</div>
+                <div class="dep-mini-author">✅ Cliente verificado</div>
+            </div>
+        </div>
+
+        <!-- Depoimento 2 -->
+        <div class="dep-mini-wrap">
+            <div class="dep-mini-thumb">
+                <video id="dep-video-mini-2" playsinline webkit-playsinline preload="metadata" muted loop disablePictureInPicture controlsList="nodownload nofullscreen noremoteplayback" x-webkit-airplay="deny">
+                    <source src="https://metodotripe.shop/wp-content/uploads/2026/04/DEP-02-MEIO.mp4" type="video/mp4">
+                </video>
+                <div class="dep-mini-play" id="dep-mini-play-btn-2">
+                    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                </div>
+            </div>
+            <div class="dep-mini-info">
+                <div class="dep-mini-label">Leandro Pimenta Peres</div>
+                <div class="dep-mini-stars">★★★★★</div>
+                <div class="dep-mini-quote">"Resultado real em menos de 30 dias. Não acreditava, mas funcionou."</div>
+                <div class="dep-mini-author">✅ Cliente verificado</div>
+            </div>
+        </div>
+
+        <!-- Depoimento 3 -->
+        <div class="dep-mini-wrap">
+            <div class="dep-mini-thumb">
+                <video id="dep-video-mini-3" playsinline webkit-playsinline preload="metadata" muted loop disablePictureInPicture controlsList="nodownload nofullscreen noremoteplayback" x-webkit-airplay="deny">
+                    <source src="https://metodotripe.shop/wp-content/uploads/2026/04/DEP-01-INICIO.mp4" type="video/mp4">
+                </video>
+                <div class="dep-mini-play" id="dep-mini-play-btn-3">
+                    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                </div>
+            </div>
+            <div class="dep-mini-info">
+                <div class="dep-mini-label">Lucas Jason da Silva</div>
+                <div class="dep-mini-stars">★★★★★</div>
+                <div class="dep-mini-quote">"Resultado real em menos de 30 dias. Não acreditava, mas funcionou."</div>
+                <div class="dep-mini-author">✅ Cliente verificado</div>
+            </div>
+        </div>
+
+        <div class="social-proof-live">🟢 <span id="live-watching">23</span> pessoas visualizando esta oferta agora</div>
+        <div class="guarantee-box"><img src="https://metodotripe.shop/wp-content/uploads/2026/04/ChatGPT-Image-19-de-abr.-de-2026-19_12_11-1.png" class="guarantee-badge" alt="Garantia"><div class="guarantee-text"><p style="font-weight:900;color:#fff">MÉTODO BICARBONATO</p><p style="font-weight:900;color:var(--green)">GARANTIA TOTAL DE 30 DIAS</p><p style="color:var(--muted)">Satisfação 100% ou seu dinheiro de volta</p></div></div>
+        <button class="btn-next" onclick="finish()">ACESSAR MEU PLANO DE 45 DIAS AGORA</button>
+        <p class="secure-footer">🔒 Compra 100% Segura e Sigilosa • Acesso Imediato</p>
+    </div>
+
 </div>
-
-<!-- ══════════════════════════════════════════
-     LOADING SCREEN
-══════════════════════════════════════════ -->
-<div id="loading-screen" class="screen">
-  <div class="lupa-wrapper">
-    <span class="lupa-emoji">🔍</span>
-  </div>
-  <div class="loading-title">Analisando seu resultado...</div>
-  <div class="loading-sub">
-    Estamos preparando seu protocolo personalizado com base nas suas respostas.
-  </div>
-  <div class="spinner-wrap">
-    <div class="spinner"></div>
-  </div>
-  <div class="loading-aguarde">Aguarde... seu acesso está sendo liberado.</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     RESULT SCREEN
-══════════════════════════════════════════ -->
-<div id="result-screen" class="screen">
-  <div class="result-header">
-    <div class="result-title">Seu diagnóstico está <span>pronto</span></div>
-    <div class="result-sub">Assista ao vídeo completo abaixo para liberar seu acesso.</div>
-  </div>
-
-  <div class="video-container" id="video-container">
-    <video
-      id="main-video"
-      src="https://metodotripe.shop/wp-content/uploads/2026/05/WhatsApp-Video-2026-05-16-at-17.05.22.mp4"
-      playsinline
-      webkit-playsinline
-      preload="auto"
-    ></video>
-
-    <!-- Tap overlay -->
-    <div class="vid-tap-overlay" id="vid-tap-overlay" onclick="tapVideo()">
-      <div class="vid-center-btn hidden" id="vid-center-btn">
-        <svg id="icon-center-play" viewBox="0 0 24 24" fill="white">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
-        <svg id="icon-center-pause" viewBox="0 0 24 24" fill="white" style="display:none">
-          <path d="M6 19h4V5H6zm8-14v14h4V5z"/>
-        </svg>
-      </div>
-    </div>
-
-    <!-- Bottom mini controls: sem seek bar -->
-    <div class="video-controls hidden" id="video-controls">
-      <button class="play-pause-btn" onclick="tapVideo()">
-        <svg id="icon-play" viewBox="0 0 24 24" fill="white">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
-        <svg id="icon-pause" viewBox="0 0 24 24" fill="white" style="display:none">
-          <path d="M6 19h4V5H6zm8-14v14h4V5z"/>
-        </svg>
-      </button>
-
-      <div class="time-display" id="time-display">0:00 / 1:42</div>
-
-      <button class="volume-btn" onclick="toggleMute()">
-        <svg id="icon-vol" viewBox="0 0 24 24" fill="white">
-          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
-        </svg>
-        <svg id="icon-mute" viewBox="0 0 24 24" fill="rgba(255,255,255,0.4)" style="display:none">
-          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <div class="result-cta">
-    <button class="cta-unlock-btn" id="cta-btn" onclick="goToCheckout()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-      </svg>
-      Assista o vídeo completo para liberar
-    </button>
-    <div class="cta-security">
-      <span>🔒</span> Acesso imediato após o pagamento. <span>100% seguro e confidencial.</span>
-    </div>
-  </div>
-</div>
-
 
 <script>
-/* ════════════════════════════════════
-   QUIZ DATA
-════════════════════════════════════ */
-const questions = [
-  {
-    text: "Qual é a sua idade?",
-    options: ["Entre 18 e 25 anos","Entre 26 e 35 anos","Entre 36 e 50 anos","Entre 51 e 65 anos"]
-  },
-  {
-    text: "Qual é o tamanho aproximado do seu membro em ereção?",
-    options: ["Menos de 12 cm","De 12 a 14 cm","De 14 a 16 cm","Mais de 16 cm"]
-  },
-  {
-    text: "Você costuma acordar com ereção matinal?",
-    options: ["Quase nunca","Raramente","Às vezes","Quase sempre"]
-  },
-  {
-    text: "Como é a sua alimentação diária?",
-    options: ["Só comida ruim","50% comida ruim, 50% saudável","Tento comer bem na maioria das vezes","Dieta equilibrada e saudável"]
-  },
-  {
-    text: "Quantas horas você dorme por noite?",
-    options: ["Menos de 5 horas","De 5 a 6 horas","De 6 a 7 horas","Mais de 8 horas"]
-  },
-  {
-    text: "Você pratica atividade física?",
-    options: ["Nunca","1 vez por semana ou menos","De 2 a 3 vezes por semana","4 vezes ou mais por semana"]
-  },
-  {
-    text: "Você já tentou algum método natural para aumentar o membro?",
-    options: ["Nunca ouvi falar","Já ouvi falar, mas nunca tentei","Já tentei, mas sem consistência","Sim, com disciplina"]
-  }
+var CHECKOUT = 'https://pay.wiapy.com/mm3kNpGy6Q';
+
+var userInteracted = false;
+function markInteracted(){ userInteracted = true; }
+
+// Autoplay mudo nos vídeos da tela intro
+(function(){
+    ['intro-vid-1','intro-vid-2'].forEach(function(id){
+        var v = document.getElementById(id);
+        if(!v) return;
+        v.muted = true;
+        v.play().catch(function(){});
+    });
+})();
+
+function goIntro(){
+    document.getElementById('s-intro').classList.remove('active');
+    document.getElementById('s-0').classList.add('active');
+}
+
+var vid         = document.getElementById('main-video');
+var videoWrap   = document.getElementById('video-wrap');
+var bigPlayBtn  = document.getElementById('big-play-btn');
+var seekbarFill = document.getElementById('seekbar-fill');
+var seekbar     = document.getElementById('seekbar');
+var playerTime  = document.getElementById('player-time');
+var iconPlay    = document.getElementById('icon-play');
+var iconPause   = document.getElementById('icon-pause');
+var iconVolOn   = document.getElementById('icon-vol-on');
+var iconVolOff  = document.getElementById('icon-vol-off');
+
+vid.muted = true;
+
+function updatePlayIcons(playing){
+    iconPlay.style.display  = playing ? 'none'  : 'block';
+    iconPause.style.display = playing ? 'block' : 'none';
+}
+function updateVolIcon(){
+    iconVolOn.style.display  = vid.muted ? 'none'  : 'block';
+    iconVolOff.style.display = vid.muted ? 'block' : 'none';
+}
+updateVolIcon();
+updatePlayIcons(false);
+
+function bigPlay(){
+    markInteracted();
+    vid.muted = false;
+    updateVolIcon();
+    vid.play().then(function(){
+        bigPlayBtn.classList.add('hidden');
+        videoWrap.classList.add('playing');
+        updatePlayIcons(true);
+    }).catch(function(){
+        vid.muted = true;
+        updateVolIcon();
+        vid.play().then(function(){
+            bigPlayBtn.classList.add('hidden');
+            videoWrap.classList.add('playing');
+            updatePlayIcons(true);
+        }).catch(function(){});
+    });
+}
+
+vid.addEventListener('click', function(){
+    if(!bigPlayBtn.classList.contains('hidden')) return;
+    togglePlay();
+});
+
+function togglePlay(){
+    if(vid.paused){
+        vid.play();
+        updatePlayIcons(true);
+        videoWrap.classList.add('playing');
+    } else {
+        vid.pause();
+        updatePlayIcons(false);
+    }
+}
+
+function toggleMute(){
+    vid.muted = !vid.muted;
+    updateVolIcon();
+}
+
+vid.addEventListener('play',  function(){ updatePlayIcons(true); });
+vid.addEventListener('pause', function(){ updatePlayIcons(false); });
+vid.addEventListener('ended', function(){
+    updatePlayIcons(false);
+    bigPlayBtn.classList.remove('hidden');
+    videoWrap.classList.remove('playing');
+});
+vid.addEventListener('timeupdate', function(){
+    if(!vid.duration) return;
+    var pct = (vid.currentTime / vid.duration) * 100;
+    seekbarFill.style.width = pct + '%';
+    playerTime.textContent = fmtTime(vid.currentTime) + ' / ' + fmtTime(vid.duration);
+});
+seekbar.addEventListener('click', function(e){
+    if(!vid.duration) return;
+    var rect  = seekbar.getBoundingClientRect();
+    var ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    vid.currentTime = ratio * vid.duration;
+});
+seekbar.addEventListener('touchstart', function(e){
+    e.preventDefault();
+    if(!vid.duration) return;
+    var rect  = seekbar.getBoundingClientRect();
+    var ratio = Math.max(0, Math.min(1, (e.touches[0].clientX - rect.left) / rect.width));
+    vid.currentTime = ratio * vid.duration;
+}, {passive:false});
+
+function fmtTime(s){
+    if(isNaN(s) || s === Infinity) return '0:00';
+    var m = Math.floor(s / 60), sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+function stopVideo(){
+    try{ vid.pause(); vid.currentTime = 0; }catch(e){}
+    bigPlayBtn.classList.remove('hidden');
+    videoWrap.classList.remove('playing');
+    updatePlayIcons(false);
+}
+
+function goNext(){ stopVideo(); next(); }
+
+var depVid      = document.getElementById('dep-video');
+var depSoundBar = document.getElementById('dep-sound-bar');
+
+function unmuteDepVid(){
+    if(!depVid) return;
+    depVid.muted = false;
+    if(depSoundBar) depSoundBar.classList.add('hidden');
+}
+
+function startDepVideo(){
+    if(!depVid) return;
+    depVid.currentTime = 0;
+    depVid.muted = true;
+    depVid.play().catch(function(){});
+
+    if(userInteracted){
+        depVid.muted = false;
+        if(depSoundBar) depSoundBar.classList.add('hidden');
+    } else {
+        if(depSoundBar) depSoundBar.classList.remove('hidden');
+        document.addEventListener('touchstart', unmuteDepVid, {once:true, capture:true, passive:true});
+        document.addEventListener('click',      unmuteDepVid, {once:true, capture:true});
+    }
+}
+
+function stopDepVideo(){
+    document.removeEventListener('touchstart', unmuteDepVid, true);
+    document.removeEventListener('click',      unmuteDepVid, true);
+    try{ depVid.pause(); depVid.currentTime = 0; depVid.muted = true; }catch(e){}
+    if(depSoundBar) depSoundBar.classList.add('hidden');
+}
+
+function goNextS1(){ stopDepVideo(); next(); }
+
+var miniVideos = [
+    {vid: document.getElementById('dep-video-mini-1'), btn: document.getElementById('dep-mini-play-btn-1'), playing: false},
+    {vid: document.getElementById('dep-video-mini-2'), btn: document.getElementById('dep-mini-play-btn-2'), playing: false},
+    {vid: document.getElementById('dep-video-mini-3'), btn: document.getElementById('dep-mini-play-btn-3'), playing: false}
 ];
 
-const progressSteps = [14, 29, 43, 57, 71, 86, 100];
+miniVideos.forEach(function(item, idx){
+    if(!item.btn) return;
+    item.btn.addEventListener('click', function(){
+        if(item.playing){
+            item.vid.pause();
+            item.btn.style.opacity = '1';
+            item.playing = false;
+        } else {
+            miniVideos.forEach(function(other, i){
+                if(i !== idx && other.playing){
+                    other.vid.pause();
+                    other.btn.style.opacity = '1';
+                    other.playing = false;
+                }
+            });
+            item.vid.muted = false;
+            item.vid.play().catch(function(){
+                item.vid.muted = true;
+                item.vid.play().catch(function(){});
+            });
+            item.btn.style.opacity = '0';
+            item.playing = true;
+        }
+    });
+});
 
-let currentQ = 0;
-let answers = new Array(questions.length).fill(null);
-
-/* ════════════════════════════════════
-   RENDER QUESTION
-════════════════════════════════════ */
-function renderQuestion(idx) {
-  const q = questions[idx];
-  const isFirst = idx === 0;
-  const isLast  = idx === questions.length - 1;
-  const pct     = progressSteps[idx];
-
-  // Header
-  document.getElementById('progress-label').textContent = `Pergunta ${idx+1} de 7`;
-  document.getElementById('progress-pct').textContent   = `${pct}% completo`;
-  document.getElementById('progress-bar').style.width   = pct + '%';
-
-  // Body
-  const body = document.getElementById('quiz-body');
-  body.style.animation = 'none';
-  void body.offsetWidth;
-  body.style.animation = '';
-
-  let optionsHTML = q.options.map((opt, i) => `
-    <button class="option-btn${answers[idx] === i ? ' selected' : ''}"
-            onclick="selectOption(${i})"
-            data-idx="${i}">
-      <div class="radio-circle"></div>
-      <span class="option-label">${opt}</span>
-    </button>
-  `).join('');
-
-  body.innerHTML = `
-    <div class="question-text">${q.text}</div>
-    <div class="options-list">${optionsHTML}</div>
-  `;
-
-  // Footer
-  const footer = document.getElementById('quiz-footer');
-  const hasAnswer = answers[idx] !== null;
-
-  if (isLast) {
-    // Q7: lead DEVE clicar no botão para avançar
-    footer.innerHTML = `
-      <button class="btn-back" onclick="prevQuestion()">← &nbsp;Voltar</button>
-      <button class="btn-next ${hasAnswer ? 'enabled' : ''}" id="btn-next" onclick="nextQuestion()">
-        ✨ Ver meu potencial
-      </button>
-    `;
-  } else if (isFirst) {
-    // Q1: sem botão Voltar, sem botão Continuar — clique na opção avança
-    footer.innerHTML = `
-      <div style="height:52px"></div>
-    `;
-  } else {
-    // Q2-Q6: só botão Voltar visível — clique na opção avança
-    footer.innerHTML = `
-      <button class="btn-back" onclick="prevQuestion()">← &nbsp;Voltar</button>
-      <div style="flex:1"></div>
-    `;
-  }
+function stopAllMiniVideos(){
+    miniVideos.forEach(function(item){
+        if(!item.vid) return;
+        try{ item.vid.pause(); item.vid.currentTime = 0; }catch(e){}
+        if(item.btn) item.btn.style.opacity = '1';
+        item.playing = false;
+    });
 }
 
-function selectOption(i) {
-  answers[currentQ] = i;
-  // Atualiza visual das opções
-  document.querySelectorAll('.option-btn').forEach((btn, idx) => {
-    btn.classList.toggle('selected', idx === i);
-    btn.querySelector('.radio-circle').style.borderColor = idx === i ? 'var(--cyan)' : '';
-    btn.querySelector('.radio-circle').style.background  = idx === i ? 'var(--cyan)' : '';
-  });
+/* ===================================================
+   NAVEGAÇÃO E QUIZ
+=================================================== */
+var ICONS = {
+    sad:    '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+    warning:'<svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    neutral:'<svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+    ok:     '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+    fire:   '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M12 2c0 6-8 8-8 14a8 8 0 0016 0c0-4-2-7-4-9-1 3-4 4-4 4z"/></svg>',
+    clock:  '<svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+    target: '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>'
+};
 
-  const isLast = currentQ === questions.length - 1;
+var QUESTIONS = [
+    {id:'rigidez',   t:'Com que frequência você consegue atingir rigidez TOTAL durante uma relação sexual?', sub:'Esse dado revela seu nível de vascularização peniana', o:[{icon:'sad',text:'Quase nunca — fico mole antes de terminar'},{icon:'warning',text:'Raramente — acontece mas é instável'},{icon:'neutral',text:'Às vezes — depende do dia'},{icon:'ok',text:'Frequentemente — só falha ocasionalmente'},{icon:'fire',text:'Sempre — sem nenhuma dificuldade'}]},
+    {id:'matinal',   t:'Você ainda acorda com ereção matinal (o "sinal de testosterona")?', sub:'Indicador clínico direto dos seus níveis hormonais', o:[{icon:'sad',text:'Nunca — faz muito tempo que não acontece'},{icon:'warning',text:'Raramente — 1 vez por semana ou menos'},{icon:'ok',text:'Quase todos os dias — meu corpo ainda responde bem'}]},
+    {id:'manutencao',t:'Você consegue manter a ereção firme do início ao FIM da relação?', sub:'Esse fator define a eficácia do protocolo para você', o:[{icon:'sad',text:'Não — perco antes de terminar com frequência'},{icon:'warning',text:'Às vezes — falha na hora mais crítica'},{icon:'ok',text:'Sim — sem problemas para manter até o fim'}]},
+    {id:'libido',    t:'Como está seu desejo sexual nos últimos 3 meses?', sub:'O libido revela o estado atual da sua testosterona livre', o:[{icon:'sad',text:'Muito baixo — raramente sinto vontade'},{icon:'warning',text:'Baixo — preciso de muito estímulo'},{icon:'neutral',text:'Normal — nada me preocupa muito'},{icon:'fire',text:'Alto — só quero resultados físicos melhores'}]},
+    {id:'prioridade',t:'Ser maior e ter mais controle nas relações é uma prioridade REAL para você agora?', sub:'Sua resposta define o plano ideal para o seu perfil', o:[{icon:'target',text:'SIM — quero resolver isso o quanto antes'},{icon:'clock',text:'Sim — mas posso esperar um pouco'},{icon:'search',text:'Estou apenas pesquisando por agora'}]}
+];
 
-  if (isLast) {
-    // Q7: só habilita o botão, lead precisa clicar
-    const btn = document.getElementById('btn-next');
-    if (btn) btn.classList.add('enabled');
-  } else {
-    // Q1-Q6: clique na opção já avança (sem botão Continuar)
-    setTimeout(() => nextQuestion(), 350);
-  }
+var step = 0, qIdx = 0, totalQ = QUESTIONS.length;
+
+function next(){
+    if(step === 0){ step = 1; }
+    else if(step === 1){ step = 2; }
+    else if(step === 2){
+        if(qIdx < totalQ - 1){ qIdx++; }
+        else{ step = 3; startProcessing(); }
+    }
+    render();
 }
 
-function nextQuestion() {
-  if (answers[currentQ] === null) return;
-  if (currentQ < questions.length - 1) {
-    currentQ++;
-    renderQuestion(currentQ);
-  } else {
-    showLoading();
-  }
+function sel(id, val){ setTimeout(next, 120); }
+
+function finish(){ stopAllMiniVideos(); window.location.href = CHECKOUT; }
+
+function render(){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('s-' + step).classList.add('active');
+
+    if(step === 1){ setTimeout(startDepVideo, 150); }
+    else          { stopDepVideo(); }
+
+    if(step === 2){
+        var q = QUESTIONS[qIdx];
+        document.getElementById('q-num').textContent = qIdx + 1;
+        document.getElementById('p-fill').style.width = ((qIdx + 1) / totalQ * 100) + '%';
+        document.getElementById('q-box').innerHTML =
+            '<div class="question-text">' + q.t + '</div>' +
+            (q.sub ? '<p style="font-size:12px;color:var(--muted);font-weight:700;margin:-10px 0 16px;text-align:left">' + q.sub + '</p>' : '') +
+            '<div class="options-grid">' +
+            q.o.map(function(o, i){
+                return '<button class="option-btn" onclick="sel(\'' + q.id + '\',' + i + ')">' + (ICONS[o.icon] || '') + '<span>' + o.text + '</span></button>';
+            }).join('') +
+            '</div>';
+        document.querySelector('.quiz-card').scrollIntoView({behavior:'smooth', block:'start'});
+    }
 }
 
-function prevQuestion() {
-  if (currentQ > 0) {
-    currentQ--;
-    renderQuestion(currentQ);
-  }
+/* ===================================================
+   ANIMAÇÕES DE ANÁLISE
+=================================================== */
+var METRIC_DATA    = [{id:1,pct:87},{id:2,pct:91},{id:3,pct:78},{id:4,pct:94}];
+var SPINNER_LABELS = ['Verificando dados biométricos...','Calculando capacidade de expansão...','Analisando índice vascular...','Mapeando resposta hormonal...','Compilando diagnóstico final...'];
+
+function animateGauge(id, pct){
+    var offset = 138.23 - (pct/100)*138.23;
+    var el = document.getElementById('gf-'+id); if(el){ el.style.stroke='#22c55e'; el.style.strokeDashoffset=offset; }
+    var valEl = document.getElementById('gv-'+id); if(valEl) valEl.textContent = pct+'%';
+}
+function activateCard(id){ var c=document.getElementById('mc-'+id); if(c) c.classList.add('active'); }
+function completeCard(id){
+    var c=document.getElementById('mc-'+id); if(c){ c.classList.remove('active'); c.classList.add('done'); }
+    var gf=document.getElementById('gf-'+id); if(gf) gf.style.stroke='#22c55e';
+    var st=document.getElementById('ms-'+id); if(st) st.textContent='Confirmado ✓';
+}
+function startProcessing(){
+    var d = 600;
+    METRIC_DATA.forEach(function(m, i){
+        setTimeout(function(){ activateCard(m.id); var sl=document.getElementById('spinner-label'); if(sl) sl.textContent=SPINNER_LABELS[i]; }, i*d);
+        setTimeout(function(){ animateGauge(m.id, m.pct); }, i*d+150);
+        setTimeout(function(){ completeCard(m.id); }, i*d+550);
+    });
+    setTimeout(function(){ var sl=document.getElementById('spinner-label'); if(sl) sl.textContent=SPINNER_LABELS[4]; }, METRIC_DATA.length*d);
+    setTimeout(function(){
+        var center=document.getElementById('mc-center'); if(center) center.classList.add('done');
+        var cv=document.getElementById('center-value');  if(cv) cv.textContent='COMPATÍVEL — Plano Pronto ✓';
+        var cp=document.getElementById('check-path');    if(cp) cp.style.stroke='#22c55e';
+        var sw=document.getElementById('spinner-wrap');  if(sw) sw.style.opacity='0';
+        // Exibe o botão após análise concluída
+        var btn=document.getElementById('btn-analise'); if(btn) btn.style.display='block';
+        document.querySelector('.quiz-card').scrollIntoView({behavior:'smooth', block:'end'});
+    }, METRIC_DATA.length*d+800);
+    // Avança automaticamente depois de 5s (mantém comportamento original)
+    setTimeout(function(){ step=4; render(); }, 5000);
 }
 
-/* ════════════════════════════════════
-   LOADING → RESULT
-════════════════════════════════════ */
-function showLoading() {
-  showScreen('loading-screen');
-  setTimeout(() => {
-    showScreen('result-screen');
-    initVideo();
-  }, 3800);
+/* ===================================================
+   CONTADORES AO VIVO
+=================================================== */
+setInterval(function(){
+    var el=document.getElementById('online-count-val');
+    if(el){ var c=parseInt(el.textContent); el.textContent=Math.max(135,Math.min(172,c+Math.floor(Math.random()*6)-2)); }
+    var ae=document.getElementById('access-count');
+    if(ae&&Math.random()>0.65){ var c=parseInt(ae.textContent); ae.textContent=Math.max(42,Math.min(56,c+(Math.random()>0.5?1:-1))); }
+    var le=document.getElementById('live-watching');
+    if(le){ var c=parseInt(le.textContent); le.textContent=Math.max(18,Math.min(31,c+Math.floor(Math.random()*3)-1)); }
+},3500);
+
+// Detecta se está no in-app browser do TikTok
+var isTikTok = /musical_ly|TikTok/i.test(navigator.userAgent);
+
+if(isTikTok){
+    // Está no TikTok — mostra tela intro, não inicia o funil ainda
+    document.getElementById('s-intro').classList.add('active');
+} else {
+    // Está no navegador externo — pula direto pro funil
+    document.getElementById('s-intro').classList.remove('active');
+    render();
 }
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
-  if (id === 'result-screen') setTimeout(setVideoHeight, 50);
-}
-
-/* ════════════════════════════════════
-   VIDEO PLAYER
-════════════════════════════════════ */
-const VIDEO_DURATION = 102; // 1:42 segundos
-let videoUnlocked = false;
-let controlsTimeout = null;
-
-function initVideo() {
-  const video = document.getElementById('main-video');
-
-  // Altura retrato 9:16
-  setVideoHeight();
-
-  video.addEventListener('timeupdate', () => {
-    const dur = video.duration || VIDEO_DURATION;
-    const pct = (video.currentTime / dur) * 100;
-    document.getElementById('time-display').textContent =
-      formatTime(video.currentTime) + ' / ' + formatTime(dur);
-    if (!videoUnlocked && pct >= 98) unlockCTA();
-  });
-
-  video.addEventListener('ended', () => {
-    syncPlayIcons(true);
-    unlockCTA();
-  });
-
-  video.addEventListener('play',  () => syncPlayIcons(false));
-  video.addEventListener('pause', () => syncPlayIcons(true));
-
-  // Tenta autoplay; se bloqueado, mostra botão play central
-  video.play().then(() => {
-    // Autoplay ok — mostra controles brevemente e some
-    showControls(true);
-  }).catch(() => {
-    // Autoplay bloqueado — mostra botão central estático
-    showCenterPlay(true);
-  });
-}
-
-function syncPlayIcons(isPaused) {
-  document.getElementById('icon-play').style.display   = isPaused ? 'block' : 'none';
-  document.getElementById('icon-pause').style.display  = isPaused ? 'none'  : 'block';
-  document.getElementById('icon-center-play').style.display  = isPaused ? 'block' : 'none';
-  document.getElementById('icon-center-pause').style.display = isPaused ? 'none'  : 'block';
-}
-
-function showCenterPlay(show) {
-  const btn = document.getElementById('vid-center-btn');
-  btn.classList.toggle('hidden', !show);
-}
-
-// Mostra controles inferiores por 2.5s depois some
-function showControls(autoHide) {
-  const bar = document.getElementById('video-controls');
-  bar.classList.remove('hidden');
-  clearTimeout(controlsTimeout);
-  if (autoHide) {
-    controlsTimeout = setTimeout(() => {
-      bar.classList.add('hidden');
-    }, 2500);
-  }
-}
-
-// Tap no overlay: se pausado toca; se tocando pausa e mostra controles
-function tapVideo() {
-  const video = document.getElementById('main-video');
-  if (video.paused) {
-    video.play();
-    showControls(true);
-    showCenterPlay(false);
-  } else {
-    video.pause();
-    showControls(false); // mantém visível enquanto pausado
-    showCenterPlay(true);
-  }
-}
-
-function toggleMute() {
-  const video = document.getElementById('main-video');
-  video.muted = !video.muted;
-  document.getElementById('icon-vol').style.display  = video.muted ? 'none'  : 'block';
-  document.getElementById('icon-mute').style.display = video.muted ? 'block' : 'none';
-  showControls(true);
-}
-
-function formatTime(s) {
-  if (!s || isNaN(s)) return '0:00';
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return m + ':' + String(sec).padStart(2,'0');
-}
-
-function unlockCTA() {
-  if (videoUnlocked) return;
-  videoUnlocked = true;
-  const btn = document.getElementById('cta-btn');
-  btn.classList.add('unlocked');
-  btn.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-    </svg>
-    Quero meu acesso agora →
-  `;
-  btn.style.cursor = 'pointer';
-}
-
-function goToCheckout() {
-  if (!videoUnlocked) return;
-  window.location.href = 'https://paylume.fans/c/prototocolo-bircabona';
-}
-
-/* ════════════════════════════════════
-   INIT
-════════════════════════════════════ */
-renderQuestion(0);
-
-// Altura do vídeo: proporção 9:16 retrato, cabe na tela deixando header+CTA
-function setVideoHeight() {
-  const container = document.getElementById('video-container');
-  if (!container) return;
-  const vw = container.offsetWidth || (window.innerWidth - 32);
-  const portrait916 = vw * (16 / 9);
-  // reserva mínimo: header ~60px + CTA ~90px = 150px; usa 80px para máxima altura
-  const maxH = window.innerHeight - 80;
-  container.style.height = Math.min(portrait916, maxH) + 'px';
-}
-window.addEventListener('resize', setVideoHeight);
 </script>
 </body>
 </html>
